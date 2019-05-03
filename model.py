@@ -136,17 +136,12 @@ class NodeUpdateNetwork(nn.Module):
         # layers
         layer_list = OrderedDict()
         for l in range(len(self.num_features_list)):
-            if tt.arg.inter_deactivate:
-                layer_list['conv{}'.format(l)] = nn.Conv2d(in_channels=self.num_features_list[l-1] if l > 0 else self.in_features * 2,
-                                                           out_channels=self.num_features_list[l],
-                                                           kernel_size=1,
-                                                           bias=False)
-            else:
-                layer_list['conv{}'.format(l)] = nn.Conv2d(
-                    in_channels=self.num_features_list[l - 1] if l > 0 else self.in_features * 3,
-                    out_channels=self.num_features_list[l],
-                    kernel_size=1,
-                    bias=False)
+
+            layer_list['conv{}'.format(l)] = nn.Conv2d(
+                in_channels=self.num_features_list[l - 1] if l > 0 else self.in_features * 3,
+                out_channels=self.num_features_list[l],
+                kernel_size=1,
+                bias=False)
             layer_list['norm{}'.format(l)] = nn.BatchNorm2d(num_features=self.num_features_list[l],
                                                             )
             layer_list['relu{}'.format(l)] = nn.LeakyReLU()
@@ -170,10 +165,7 @@ class NodeUpdateNetwork(nn.Module):
         # compute attention and aggregate
         aggr_feat = torch.bmm(torch.cat(torch.split(edge_feat, 1, 1), 2).squeeze(1), node_feat)
 
-        if tt.arg.inter_deactivate:
-            node_feat = torch.cat([node_feat, aggr_feat.split(num_data, 1)[0]], -1).transpose(1, 2)
-        else:
-            node_feat = torch.cat([node_feat, torch.cat(aggr_feat.split(num_data, 1), -1)], -1).transpose(1, 2)
+        node_feat = torch.cat([node_feat, torch.cat(aggr_feat.split(num_data, 1), -1)], -1).transpose(1, 2)
 
         # non-linear transform
         node_feat = self.network(node_feat.unsqueeze(-1)).transpose(1, 2).squeeze(-1)
@@ -251,41 +243,15 @@ class EdgeUpdateNetwork(nn.Module):
             dsim_val = 1.0 - sim_val
 
 
-        if tt.arg.inter_deactivte:
-            diag_mask = 1.0 - torch.eye(node_feat.size(1)).unsqueeze(0).unsqueeze(0).repeat(node_feat.size(0), 1, 1,
-                                                                                            1).to(tt.arg.device)
-            edge_feat = edge_feat * diag_mask.detach()
-
-            edge_feat_1 = edge_feat
-            edge_feat_2 = 1 - edge_feat
-
-            merge_sum_1 = torch.sum(edge_feat_1, -1, True)
-            edge_feat_1 = F.normalize(sim_val * edge_feat_1, p=1, dim=-1) * merge_sum_1
-
-            merge_sum_2 = torch.sum(edge_feat_2, -1, True)
-            edge_feat_2 = F.normalize(dsim_val * edge_feat_2, p=1, dim=-1) * merge_sum_2
-
-            edge_feat = torch.cat([edge_feat_1, edge_feat_2], 1)
-
-            force_edge_feat = torch.cat((torch.eye(node_feat.size(1)).unsqueeze(0),
-                                         torch.zeros(node_feat.size(1), node_feat.size(1)).unsqueeze(0)),
-                                        0).unsqueeze(0).repeat(node_feat.size(0), 1, 1, 1).to(tt.arg.device)
-
-            edge_feat = edge_feat + force_edge_feat.detach()
-
-            edge_feat = edge_feat + 1e-6
-            edge_feat = edge_feat / torch.sum(edge_feat, dim=1).unsqueeze(1).repeat(1, 2, 1, 1)
-
-        else:
-            diag_mask = 1.0 - torch.eye(node_feat.size(1)).unsqueeze(0).unsqueeze(0).repeat(node_feat.size(0), 2, 1, 1).to(tt.arg.device)
-            edge_feat = edge_feat * diag_mask
-            merge_sum = torch.sum(edge_feat, -1, True)
-            # set diagonal as zero and normalize
-            edge_feat = F.normalize(torch.cat([sim_val, dsim_val], 1) * edge_feat, p=1, dim=-1) * merge_sum
-            force_edge_feat = torch.cat((torch.eye(node_feat.size(1)).unsqueeze(0), torch.zeros(node_feat.size(1), node_feat.size(1)).unsqueeze(0)), 0).unsqueeze(0).repeat(node_feat.size(0), 1, 1, 1).to(tt.arg.device)
-            edge_feat = edge_feat + force_edge_feat
-            edge_feat = edge_feat + 1e-6
-            edge_feat = edge_feat / torch.sum(edge_feat, dim=1).unsqueeze(1).repeat(1, 2, 1, 1)
+        diag_mask = 1.0 - torch.eye(node_feat.size(1)).unsqueeze(0).unsqueeze(0).repeat(node_feat.size(0), 2, 1, 1).to(tt.arg.device)
+        edge_feat = edge_feat * diag_mask
+        merge_sum = torch.sum(edge_feat, -1, True)
+        # set diagonal as zero and normalize
+        edge_feat = F.normalize(torch.cat([sim_val, dsim_val], 1) * edge_feat, p=1, dim=-1) * merge_sum
+        force_edge_feat = torch.cat((torch.eye(node_feat.size(1)).unsqueeze(0), torch.zeros(node_feat.size(1), node_feat.size(1)).unsqueeze(0)), 0).unsqueeze(0).repeat(node_feat.size(0), 1, 1, 1).to(tt.arg.device)
+        edge_feat = edge_feat + force_edge_feat
+        edge_feat = edge_feat + 1e-6
+        edge_feat = edge_feat / torch.sum(edge_feat, dim=1).unsqueeze(1).repeat(1, 2, 1, 1)
 
         return edge_feat
 

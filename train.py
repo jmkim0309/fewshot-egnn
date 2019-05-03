@@ -85,17 +85,13 @@ class ModelTrainer(object):
             full_label = torch.cat([support_label, query_label], 1)
             full_edge = self.label2edge(full_label)
 
-            if tt.arg.inter_deactivate:
-                full_edge = full_edge[:, 0].unsqueeze(1)
-
             # set init edge
             init_edge = full_edge.clone()  # batch_size x 2 x num_samples x num_samples
             init_edge[:, :, num_supports:, :] = 0.5
             init_edge[:, :, :, num_supports:] = 0.5
             for i in range(num_queries):
                 init_edge[:, 0, num_supports + i, num_supports + i] = 1.0
-                if not tt.arg.inter_deactivate:
-                    init_edge[:, 1, num_supports + i, num_supports + i] = 0.0
+                init_edge[:, 1, num_supports + i, num_supports + i] = 0.0
 
             # for semi-supervised setting,
             for c in range(tt.arg.num_ways_train):
@@ -124,10 +120,7 @@ class ModelTrainer(object):
                 query_data_reshaped = query_data.contiguous().view(tt.arg.meta_batch_size * num_queries, -1).unsqueeze(1) # (batch_size x num_queries) x 1 x featdim
                 input_node_feat = torch.cat([support_data_tiled, query_data_reshaped], 1) # (batch_size x num_queries) x (num_support + 1) x featdim
 
-                if tt.arg.inter_deactivate:
-                    input_edge_feat = 0.5 * torch.ones(tt.arg.meta_batch_size, 1, num_supports + 1, num_supports + 1).to(tt.arg.device) # batch_size x 2 x (num_support + 1) x (num_support + 1)
-                else:
-                    input_edge_feat = 0.5 * torch.ones(tt.arg.meta_batch_size, 2, num_supports + 1, num_supports + 1).to(tt.arg.device) # batch_size x 2 x (num_support + 1) x (num_support + 1)
+                input_edge_feat = 0.5 * torch.ones(tt.arg.meta_batch_size, 2, num_supports + 1, num_supports + 1).to(tt.arg.device) # batch_size x 2 x (num_support + 1) x (num_support + 1)
 
                 input_edge_feat[:, :, :num_supports, :num_supports] = init_edge[:, :, :num_supports, :num_supports] # batch_size x 2 x (num_support + 1) x (num_support + 1)
                 input_edge_feat = input_edge_feat.repeat(num_queries, 1, 1, 1) #(batch_size x num_queries) x 2 x (num_support + 1) x (num_support + 1)
@@ -135,18 +128,12 @@ class ModelTrainer(object):
                 # logit: (batch_size x num_queries) x 2 x (num_support + 1) x (num_support + 1)
                 logit_layers = self.gnn_module(node_feat=input_node_feat, edge_feat=input_edge_feat)
 
-                if tt.arg.inter_deactivate:
-                    logit_layers = [logit_layer.view(tt.arg.meta_batch_size, num_queries, 1, num_supports + 1, num_supports + 1) for logit_layer in logit_layers]
-                else:
-                    logit_layers = [logit_layer.view(tt.arg.meta_batch_size, num_queries, 2, num_supports + 1, num_supports + 1) for logit_layer in logit_layers]
+                logit_layers = [logit_layer.view(tt.arg.meta_batch_size, num_queries, 2, num_supports + 1, num_supports + 1) for logit_layer in logit_layers]
 
                 # logit --> full_logit (batch_size x 2 x num_samples x num_samples)
                 full_logit_layers = []
                 for l in range(tt.arg.num_layers):
-                    if tt.arg.inter_deactivate:
-                        full_logit_layers.append(torch.zeros(tt.arg.meta_batch_size, 1, num_samples, num_samples).to(tt.arg.device))
-                    else:
-                        full_logit_layers.append(torch.zeros(tt.arg.meta_batch_size, 2, num_samples, num_samples).to(tt.arg.device))
+                    full_logit_layers.append(torch.zeros(tt.arg.meta_batch_size, 2, num_samples, num_samples).to(tt.arg.device))
 
                 for l in range(tt.arg.num_layers):
                     full_logit_layers[l][:, :, :num_supports, :num_supports] = logit_layers[l][:, :, :, :num_supports, :num_supports].mean(1)
@@ -256,18 +243,13 @@ class ModelTrainer(object):
             full_label = torch.cat([support_label, query_label], 1)
             full_edge = self.label2edge(full_label)
 
-            if tt.arg.inter_deactivate:
-                # use 1-dimensional edge feature
-                full_edge = full_edge[:, 0].unsqueeze(1)
-
             # set init edge
             init_edge = full_edge.clone()
             init_edge[:, :, num_supports:, :] = 0.5
             init_edge[:, :, :, num_supports:] = 0.5
             for i in range(num_queries):
                 init_edge[:, 0, num_supports + i, num_supports + i] = 1.0
-                if not tt.arg.inter_deactivate:
-                    init_edge[:, 1, num_supports + i, num_supports + i] = 0.0
+                init_edge[:, 1, num_supports + i, num_supports + i] = 0.0
 
             # for semi-supervised setting,
             for c in range(tt.arg.num_ways_test):
@@ -289,10 +271,7 @@ class ModelTrainer(object):
             else:
                 evaluation_mask[:, num_supports:, num_supports:] = 0  # ignore query-query edges, since it is non-transductive setting
 
-                if tt.arg.inter_deactivate:
-                    full_logit = torch.zeros(tt.arg.test_batch_size, 1, num_samples, num_samples).to(tt.arg.device)
-                else:
-                    full_logit = torch.zeros(tt.arg.test_batch_size, 2, num_samples, num_samples).to(tt.arg.device)
+                full_logit = torch.zeros(tt.arg.test_batch_size, 2, num_samples, num_samples).to(tt.arg.device)
 
                 # input_node_feat: (batch_size x num_queries) x (num_support + 1) x featdim
                 # input_edge_feat: (batch_size x num_queries) x 2 x (num_support + 1) x (num_support + 1)
@@ -303,10 +282,7 @@ class ModelTrainer(object):
                 query_data_reshaped = query_data.contiguous().view(tt.arg.test_batch_size * num_queries, -1).unsqueeze(1) # (batch_size x num_queries) x 1 x featdim
                 input_node_feat = torch.cat([support_data_tiled, query_data_reshaped], 1) # (batch_size x num_queries) x (num_support + 1) x featdim
 
-                if tt.arg.inter_deactivate:
-                    input_edge_feat = 0.5 * torch.ones(tt.arg.test_batch_size, 1, num_supports + 1, num_supports + 1).to(tt.arg.device)  # batch_size x 1 x (num_support + 1) x (num_support + 1)
-                else:
-                    input_edge_feat = 0.5 * torch.ones(tt.arg.test_batch_size, 2, num_supports + 1, num_supports + 1).to(tt.arg.device)  # batch_size x 2 x (num_support + 1) x (num_support + 1)
+                input_edge_feat = 0.5 * torch.ones(tt.arg.test_batch_size, 2, num_supports + 1, num_supports + 1).to(tt.arg.device)  # batch_size x 2 x (num_support + 1) x (num_support + 1)
 
                 input_edge_feat[:, :, :num_supports, :num_supports] = init_edge[:, :, :num_supports, :num_supports]  # batch_size x 2 x (num_support + 1) x (num_support + 1)
                 input_edge_feat = input_edge_feat.repeat(num_queries, 1, 1, 1)  # (batch_size x num_queries) x 2 x (num_support + 1) x (num_support + 1)
@@ -314,10 +290,7 @@ class ModelTrainer(object):
                 # logit: (batch_size x num_queries) x 2 x (num_support + 1) x (num_support + 1)
                 logit = self.gnn_module(node_feat=input_node_feat, edge_feat=input_edge_feat)[-1]
 
-                if tt.arg.inter_deactivate:
-                    logit = logit.view(tt.arg.test_batch_size, num_queries, 1, num_supports + 1, num_supports + 1)
-                else:
-                    logit = logit.view(tt.arg.test_batch_size, num_queries, 2, num_supports + 1, num_supports + 1)
+                logit = logit.view(tt.arg.test_batch_size, num_queries, 2, num_supports + 1, num_supports + 1)
 
                 # batch_size x num_queries x 2 x (num_support + 1) x (num_support + 1)
                 # logit --> full_logit (batch_size x 2 x num_samples x num_samples)
