@@ -4,7 +4,8 @@
 
 The current project page provides pytorch code that implements the following CVPR2019 paper:   
 **Title:**      "Edge-labeling Graph Neural Network for Few-shot Learning"    
-**Authors:**     Jongmin Kim, Taesup Kim, Sungwoong Kim, Chang D.Yoo 
+**Authors:**     Jongmin Kim, Taesup Kim, Sungwoong Kim, Chang D.Yoo
+
 **Institution:** KAIST, KaKaoBrain     
 **Code:**        https://github.com/khy0809/fewshot-egnn  
 **Arxiv:**       -
@@ -45,7 +46,7 @@ If you find this code useful you can cite us using the following bibTex:
 
 
 ### Platform
-- pytorch 0.4.1, python 3
+- This code was developed and tested with pytorch version 0.4.1
 
 ### Setting
 - In ```train.py```, replace the dataset root directory with your own:
