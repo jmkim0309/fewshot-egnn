@@ -46,18 +46,14 @@ If you find this code useful you can cite us using the following bibTex:
 
 
 ### Platform
-- This code was developed and tested with pytorch version 0.4.1
+This code was developed and tested with pytorch version 0.4.1
 
 ### Setting
-<<<<<<< HEAD
-You can download miniImagenet and tieredImagenet datasets from [here].
+
+You can download miniImagenet and tieredImagenet datasets from [here] (will be available soon).
 
 In ```train.py```, replace the dataset root directory with your own:
-=======
-- In ```train.py```, replace the dataset root directory with your own:
->>>>>>> parent of 37862d0... first commit
-
-  tt.arg.dataset_root = '/data/private/dataset'
+tt.arg.dataset_root = '/data/private/dataset'
 
 
 
@@ -94,7 +90,7 @@ $ python3 eval.py --test_model D-mini_N-5_K-1_U-0_L-3_B-40_T-True
 
 
 ## Result
-Here are some experimental results presented in the paper. You should be able to reproduce all the results by using the trained models which can be downloaded from [here].
+Here are some experimental results presented in the paper. You should be able to reproduce all the results by using the trained models which can be downloaded from [here] (will be available soon).
 #### miniImageNet, non-transductive
 
 | Model                    |  5-way 5-shot acc (%)| 
