@@ -48,7 +48,7 @@ class ModelTrainer(object):
 
         # set edge mask (to distinguish support and query edges)
         num_supports = tt.arg.num_ways_train * tt.arg.num_shots_train
-        num_queries = tt.arg.num_ways_train * tt.arg.num_queries_train + tt.arg.num_neg_queries_train
+        num_queries = tt.arg.num_ways_train * 1
         num_samples = num_supports + num_queries
         support_edge_mask = torch.zeros(tt.arg.meta_batch_size, num_samples, num_samples).to(tt.arg.device)
         support_edge_mask[:, :num_supports, :num_supports] = 1
@@ -208,7 +208,7 @@ class ModelTrainer(object):
         best_acc = 0
         # set edge mask (to distinguish support and query edges)
         num_supports = tt.arg.num_ways_test * tt.arg.num_shots_test
-        num_queries = tt.arg.num_ways_test * tt.arg.num_queries_test
+        num_queries = tt.arg.num_ways_test * 1
         num_samples = num_supports + num_queries
         support_edge_mask = torch.zeros(tt.arg.test_batch_size, num_samples, num_samples).to(tt.arg.device)
         support_edge_mask[:, :num_supports, :num_supports] = 1
@@ -228,7 +228,6 @@ class ModelTrainer(object):
 
         # for each iteration
         for iter in range(tt.arg.test_iteration//tt.arg.test_batch_size):
-            print(iter)
             # load task data list
             [support_data,
              support_label,
