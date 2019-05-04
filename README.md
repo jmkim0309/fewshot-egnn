@@ -46,7 +46,7 @@ If you find this code useful you can cite us using the following bibTex:
 
 
 ### Platform
-This code was developed and tested with pytorch version 0.4.1
+This code was developed and tested with pytorch version 1.0.1
 
 ### Setting
 
