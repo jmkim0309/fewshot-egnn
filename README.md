@@ -105,31 +105,31 @@ Here are some experimental results presented in the paper. You should be able to
 
 | Model                    |  5-way 5-shot acc (%)| 
 |--------------------------|  ------------------: | 
-| MAML [1]                 |         63.11        | 
+| MAML [5]                 |         63.11        | 
 | Reptile + BN [2]         |         65.99        | 
-| Relation Net [3]         |         67.07        | 
-| MAML + Transduction [4]  |         66.19        | 
-| TPN [4]                  |         69.43        | 
-| TPN (Higher K) [4]       |         69.86        | 
+| Relation Net [6]         |         67.07        | 
+| MAML + Transduction [5]  |         66.19        | 
+| TPN [7]                  |         69.43        | 
+| TPN (Higher K) [7]       |         69.86        | 
 | **(ours)** EGNN          |         **76.37**        | 
 
 #### tieredImageNet, non-transductive
 
 | Model                    |  5-way 5-shot acc (%)| 
 |--------------------------|  ------------------: | 
-| Reptile [1]              |         66.47        | 
-| Prototypical Net [2]     |         69.57        | 
+| Reptile [2]              |         66.47        | 
+| Prototypical Net [3]     |         69.57        | 
 | **(ours)** EGNN          |         **70.98**        | 
 
 #### tieredImageNet, transductive
 
 | Model                    |  5-way 5-shot acc (%)| 
 |--------------------------|  ------------------: | 
-| MAML [1]                 |         70.30        | 
+| MAML [5]                 |         70.30        | 
 | Reptile + BN [2]         |         71.03        | 
-| Relation Net [3]         |         71.31        | 
-| MAML + Transduction [4]  |         70.83        | 
-| TPN [4]                  |         72.58        | 
+| Relation Net [6]         |         71.31        | 
+| MAML + Transduction [5]  |         70.83        | 
+| TPN [7]                  |         72.58        | 
 | **(ours)** EGNN          |         **80.15**        | 
 
 
@@ -137,8 +137,8 @@ Here are some experimental results presented in the paper. You should be able to
 
 | Model                    |  20%                 | 40%                 | 60%                 | 100%                 | 
 |--------------------------|  ------------------: | ------------------: | ------------------: | ------------------:  | 
-| GNN-LabeledOnly[1]       |      50.33                |      56.91               |        -             |        66.41              |
-| GNN-Semi [2]             |      52.45                |      58.76               |        -             |        66.41              |
+| GNN-LabeledOnly [4]       |      50.33                |      56.91               |        -             |        66.41              |
+| GNN-Semi [4]             |      52.45                |      58.76               |        -             |        66.41              |
 | EGNN-LabeledOnly         |      52.86                |        -             |            -         |            66.85          |
 | EGNN-Semi                |      61.88                |        62.52             |        63.53             |    66.85                  |
 | EGNN-LabeledOnly (Transductive) |      59.18         |         -            |           -          |           76.37           |
@@ -147,10 +147,10 @@ Here are some experimental results presented in the paper. You should be able to
 
 ### References
 ```
-[1] B. Hariharan and R. Girshick. Low-shot visual recognition by shrinking and hallucinating features.
-[2] Y.-X. Wang and R. Girshick, M. Hebert, B. Hariharan. Low-shot learning from imaginary data.
-[3] O. Vinyals et al. Matching networks for one shot learning.
-[4] J. Snell, K. Swersky, and R. S. Zemel. Prototypical networks for few-shot learning.
-[5] S. Ravi and H. Larochelle. Optimization as a model for few-shot learning.
-[6] C. Finn, P. Abbeel, and S. Levine. Model-agnostic meta-learning for fast adaptation of deep networks.
-```
+[1] O. Vinyals et al. Matching networks for one shot learning.
+[2] A Nichol, J Achiam, J Schulman, On first-order meta-learning algorithms.
+[3] J. Snell, K. Swersky, and R. S. Zemel. Prototypical networks for few-shot learning.
+[4] V Garcia, J Bruna, Few-shot learning with graph neural network.
+[5] C. Finn, P. Abbeel, and S. Levine. Model-agnostic meta-learning for fast adaptation of deep networks.
+[6] F. Sung et al, Learning to Compare: Relation Network for Few-Shot Learning.
+[7] Y Liu, J Lee, M Park, S Kim, Y Yang, Transductive propagation network for few-shot learning.
