@@ -145,6 +145,20 @@ Here are some experimental results presented in the paper. You should be able to
 | EGNN-Semi (Transductive)        |      63.62         |        64.32             |        66.37             |   76.37                   |
 
 
+#### miniImageNet, cross-way experiment
+| Model                    |  train way                 | test way                 |  Accuracy |
+|--------------------------|  ------------------: | ------------------: | ------------------: |
+| GNN       |      5                |      5               |      66.41     |
+| GNN       |      5                |      10               |     N/A      |
+| GNN       |      10                |     10            |       51.75    |
+| GNN       |      10             |      5              |       N/A    |
+| EGNN       |      5             |      5              |       76.37    |
+| EGNN       |      5             |      10              |       56.35    |
+| EGNN       |      10             |      10              |       57.61   |
+| EGNN       |      10             |      5              |       76.27   |
+
+
+
 ### References
 ```
 [1] O. Vinyals et al. Matching networks for one shot learning.
