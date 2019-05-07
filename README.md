@@ -50,7 +50,10 @@ This code was developed and tested with pytorch version 1.0.1
 
 ### Setting
 
-You can download miniImagenet and tieredImagenet datasets from [here] (will be available soon).
+You can download miniImagenet dataset from [here](https://drive.google.com/open?id=15WuREBvhEbSWo4fTr1r-vMY0C_6QWv4w).
+
+Download 'mini_imagenet_train/val/test.pickle', and put them in the path 
+'tt.arg.dataset_root/mini-imagenet/compacted_dataset/'
 
 In ```train.py```, replace the dataset root directory with your own:
 tt.arg.dataset_root = '/data/private/dataset'
@@ -90,7 +93,7 @@ $ python3 eval.py --test_model D-mini_N-5_K-1_U-0_L-3_B-40_T-True
 
 
 ## Result
-Here are some experimental results presented in the paper. You should be able to reproduce all the results by using the trained models which can be downloaded from [here] (will be available soon).
+Here are some experimental results presented in the paper. You should be able to reproduce all the results by using the trained models which can be downloaded from [here](https://drive.google.com/open?id=15WuREBvhEbSWo4fTr1r-vMY0C_6QWv4w).
 #### miniImageNet, non-transductive
 
 | Model                    |  5-way 5-shot acc (%)| 
