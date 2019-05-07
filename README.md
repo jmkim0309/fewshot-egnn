@@ -8,7 +8,7 @@ The current project page provides pytorch code that implements the following CVP
 
 **Institution:** KAIST, KaKaoBrain     
 **Code:**        https://github.com/khy0809/fewshot-egnn  
-**Arxiv:**       -
+**Arxiv:**       https://arxiv.org/abs/1905.01436
 
 **Abstract:**
 In this paper, we propose a novel edge-labeling graph
@@ -39,7 +39,7 @@ If you find this code useful you can cite us using the following bibTex:
 @article{kim2019egnn,
   title={Edge-labeling Graph Neural Network for Few-shot Learning},
   author={Jongmin Kim, Taesup Kim, Sungwoong Kim, Chang D. Yoo},
-  journal={arXiv preprint arXiv:-},
+  journal={arXiv preprint arXiv:1905.01436},
   year={2019}
 }
 ```
