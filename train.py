@@ -186,13 +186,10 @@ class ModelTrainer(object):
                 is_best = 0
 
                 if val_acc >= self.val_acc:
-                    test_acc = self.eval(partition='test')
-                    self.test_acc = test_acc
                     self.val_acc = val_acc
                     is_best = 1
 
                 tt.log_scalar('val/best_accr', self.val_acc, self.global_step)
-                tt.log_scalar('test/best_accr', self.test_acc, self.global_step)
 
                 self.save_checkpoint({
                     'iteration': self.global_step,
@@ -413,9 +410,9 @@ if __name__ == '__main__':
     # train, test parameters
     tt.arg.train_iteration = 100000 if tt.arg.dataset == 'mini' else 200000
     tt.arg.test_iteration = 10000
-    tt.arg.test_interval = 5000
+    tt.arg.test_interval = 5000 if tt.arg.test_interval is None else tt.arg.test_interval
     tt.arg.test_batch_size = 10
-    tt.arg.log_step = 1000
+    tt.arg.log_step = 1000 if tt.arg.log_step is None else tt.arg.log_step
 
     tt.arg.lr = 1e-3
     tt.arg.grad_clip = 5
